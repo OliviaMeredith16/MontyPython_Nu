@@ -404,6 +404,20 @@ diff_em_PiecewiseSingle_r = [0.0] * N
 diff_me_PiecewiseSingle_r = [0.0] * N
 diff_em_PiecewiseVac_r = [0.0] * N
 diff_me_PiecewiseVac_r = [0.0] * N
+
+U1_modsqd01 = [0.0] * N
+U2_modsqd01 = [0.0] * N
+U1_modsqd10 = [0.0] * N
+U2_modsqd10 = [0.0] * N
+
+U1_modsqd00 = [0.0] * N
+U2_modsqd00 = [0.0] * N
+
+U3_modsqd00 = [0.0] * N
+U3_modsqd10 = [0.0] * N
+U3_modsqd01 = [0.0] * N
+U1U2U3_modsqd01 = [0.0] * N
+U3U2U1_modsqd01 = [0.0] * N
 av_em = 0.0
 av_me =	0.0
 to_em =	0.0
@@ -643,6 +657,23 @@ for nu in range(N):
     
     Unitary_total_reversed[nu] = U_multiply(Unitary3[nu],Unitary2[nu],Unitary1[nu],types)
 
+
+    print(Unitary1[nu])
+    print(Unitary2[nu])
+    print(Unitary3[nu])
+    print(Unitary_total_reversed[nu])
+    print(Unitary_total[nu])
+#    if Unitary1[nu].all() == np.transpose(Unitary1[nu]).all():
+ #       print('Unitary1 is symmetric!')
+  #  if Unitary2[nu].all( )== np.transpose(Unitary2[nu]).all():
+   #     print('Unitary2 is symmetric!')
+    #if Unitary3[nu].all( )== np.transpose(Unitary3[nu]).all():
+     #   print('Unitary3 is symmetric!')
+    #if Unitary_total[nu].all()== np.transpose(Unitary_total[nu]).all():
+     #   print('U3U2U1 is symmetric!')
+    #if Unitary_total_reversed[nu].all() == np.transpose(Unitary_total_reversed[nu]).all():
+     #   print('U1U2U3 is symmetric!')
+
     Pee_reversed[nu] = probEE(Unitary_total_reversed[nu], types)
     Pmm_reversed[nu] = probMM(Unitary_total_reversed[nu], types)
     Pme_reversed[nu] = probME(Unitary_total_reversed[nu], types)
@@ -710,9 +741,18 @@ for nu in range(N):
     e_disappearance_vac[nu] = Pem_vac[nu] + Pet_vac[nu]
     m_disappearance_vac[nu] = Pme_vac[nu] + Pmt_vac[nu]
     t_disappearance_vac[nu] = Pte_vac[nu] + Ptm_vac[nu]
-    
 
-    ###be more complete
+    U3U2U1_modsqd01[nu] = Unitary_total[nu][0][1]*np.conjugate(Unitary_total[nu][0][1])
+    U1U2U3_modsqd01[nu] = Unitary_total_reversed[nu][0][1]*np.conjugate(Unitary_total_reversed[nu][0][1])
+
+
+    U3U2U1_modsqd01[nu]= U3U2U1_modsqd01[nu].real
+    U1U2U3_modsqd01[nu] = U1U2U3_modsqd01[nu].real
+
+    print('check U3U2U1_modsqd01 == U1U2U3_modsqd01')
+    print(U3U2U1_modsqd01[nu])
+    print(U1U2U3_modsqd01[nu])
+
     print('vac prob check')                                     
     print(Pee_vac[nu]+Pem_vac[nu]+Pet_vac[nu])                          
     print(Pme_vac[nu]+Pmm_vac[nu]+Pmt_vac[nu])
@@ -950,10 +990,21 @@ for nu2 in range(N):
     #diff_me_PiecewiseSingle[nu2] = (Pme[nu2] - Pme_single_matter[nu2])/av_me
     #diff_em_PiecewiseSingle[nu2] = (Pem[nu2] - Pem_single_matter[nu2])/av_em
 
+fig16 =plt.figure(16)
+plt.plot(EE, U3U2U1_modsqd01, color='b', label='(0,1) of |U3U2U1|^2 ')
+plt.plot(EE, U1U2U3_modsqd01, color='m',linestyle='dashed', label='(0,1) of |U1U2U3|^2 ')
+          #plt.plot(EE, Pme_reversed, color='g', label='P_me Reversed')                                                                    
+#plt.plot(EE, Pem_reversed, color='y', linestyle='dashed',label='P_em Reversed')                                                 
+#plt.title("decreasing piecewise matter potential and vacuum",fontsize=10)                                                       
+plt.legend(fontsize=10)
+          
+plt.xlabel('                                  Energy (GeV)')
+
+#fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/off_dig_mod_sq.jpg')
 
 
-
-
+#plt.show()
+"""
 fig100 =plt.figure(100)
 plt.plot(EE, diff_Pme_in_de_piecewise_matter, color='m',linestyle='dashed', label='diff_Pme_propVSimprop')
 plt.plot(EE, diff_Pem_in_de_piecewise_matter, color='y', label='diff_Pem_propVSimprop')
@@ -1453,7 +1504,7 @@ plt.plot(EE, Pte, color='y',linestyle='dashed', label='P_te increasing constant 
 plt.title("increasing constant matter prob: nu_tau and nu_e ",fontsize=10)
 plt.xlabel('                                  Energy (GeV)')
 plt.legend(fontsize=10)
-#"""
+
 plt.show()
 #
 #time_invar_propVSimprop/3_flavor_oscillations_10^-4V_CP90
@@ -1544,7 +1595,6 @@ fig150.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_f
 
 
 #plt.close()
-"""
 plt.close(fig1)
 plt.close(fig2)
 plt.close(fig3)

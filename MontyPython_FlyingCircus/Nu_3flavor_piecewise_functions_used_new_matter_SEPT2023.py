@@ -13,7 +13,7 @@ def Unitary_matrix(energy, flavors, potential, baseline):
     A = potential
     #L, dmSq, EE, Theta = symbols('L dmSq EE Theta')
     L = baseline
-    d_CP = 0.0#90.00*math.pi/180#197.00*math.pi/180#232.00*math.pi/180#0.0#3.1415926535897932384#/2.0#0
+    d_CP = 90.00*math.pi/180#197.00*math.pi/180#232.00*math.pi/180#0.0#3.1415926535897932384#/2.0#0
     dmSq21 = 7.41e-5#0.001 #0.0547723
     dmSq31 = 2.511e-3
     dmSq32 = dmSq31 - dmSq21
@@ -217,8 +217,8 @@ def Unitary_matrix(energy, flavors, potential, baseline):
 #        t = np.dot(,np.dot(Dig,u_test))
         t = np.dot(u_dtest2,np.dot(Dig,u_test))
         print(t)
-        #print(' ')
-        #print(AA)
+        #print('orig. check ')
+        #print(H_0)
         #print(' ')
 
         
@@ -341,6 +341,17 @@ def U_multiply(matrix1, matrix2, flavors):
     return(U_total)
     
 N = 1000
+U1_modsqd01 = [0.0] * N
+U2_modsqd01 = [0.0] * N
+U1_modsqd10 = [0.0] * N
+U2_modsqd10 = [0.0] * N
+
+U1_modsqd00 = [0.0] * N
+U2_modsqd00 = [0.0] * N
+
+U1U2_modsqd01 = [0.0] * N
+U2U1_modsqd01 = [0.0] * N
+
 EE = [0.0] * N
 Pem = [0.0] * N
 Pee = [0.0] * N
@@ -614,8 +625,8 @@ for nu in range(N):
         
     Unitary1[nu] = Unitary_matrix(EE[nu], types, V1, LL1)
     Unitary2[nu] = Unitary_matrix(EE[nu], types, V2, LL2)
-    Unitary_total[nu] = U_multiply(Unitary1[nu],Unitary2[nu],types)
 
+    Unitary_total[nu] = U_multiply(Unitary1[nu],Unitary2[nu],types)
     Pee[nu] = probEE(Unitary_total[nu], types)
     Pmm[nu] = probMM(Unitary_total[nu], types)
     Pme[nu] = probME(Unitary_total[nu], types)
@@ -640,7 +651,22 @@ for nu in range(N):
 
     
     Unitary_total_reversed[nu] = U_multiply(Unitary2[nu],Unitary1[nu],types)
-
+    print('test')
+    print(Unitary1[nu])
+    print(Unitary2[nu])
+    #print(Unitary3[nu])
+    print(Unitary_total_reversed[nu])
+    print(Unitary_total[nu])
+    #print(Unitary1[nu])
+#    print(Unitary2[nu])
+#    if Unitary1[nu].all() == np.transpose(Unitary1[nu]).all():
+ #       print('Unitary1 is symmetric!')
+  #  if Unitary2[nu].all( )== np.transpose(Unitary2[nu]).all():
+   #     print('Unitary2 is symmetric!')
+    #if Unitary_total[nu].all()== np.transpose(Unitary_total[nu]).all():
+     #   print('U2U1 is symmetric!')
+    #if Unitary_total_reversed[nu].all() == np.transpose(Unitary_total_reversed[nu]).all():
+     #   print('U1U2 is symmetric!')
     Pee_reversed[nu] = probEE(Unitary_total_reversed[nu], types)
     Pmm_reversed[nu] = probMM(Unitary_total_reversed[nu], types)
     Pme_reversed[nu] = probME(Unitary_total_reversed[nu], types)
@@ -710,6 +736,27 @@ for nu in range(N):
     t_disappearance_vac[nu] = Pte_vac[nu] + Ptm_vac[nu]
     
 
+
+    U1_modsqd00[nu] = (Unitary1[nu][0][0]*np.conjugate(Unitary1[nu][0][0])).real
+    U2_modsqd00[nu] = (Unitary2[nu][0][0]*np.conjugate(Unitary2[nu][0][0])).real
+
+    U1_modsqd01[nu] = (Unitary1[nu][0][1]*np.conjugate(Unitary1[nu][0][1])).real
+    U2_modsqd01[nu] = (Unitary2[nu][0][1]*np.conjugate(Unitary2[nu][0][1])).real
+    U1_modsqd10[nu] = (Unitary1[nu][1][0]*np.conjugate(Unitary1[nu][1][0])).real
+    U2_modsqd10[nu] = (Unitary2[nu][1][0]*np.conjugate(Unitary2[nu][1][0])).real
+
+
+    U2U1_modsqd01[nu] = Unitary_total[nu][0][1]*np.conjugate(Unitary_total[nu][0][1])
+    U1U2_modsqd01[nu] = Unitary_total_reversed[nu][0][1]*np.conjugate(Unitary_total_reversed[nu][0][1])
+
+    U2U1_modsqd01[nu]= U2U1_modsqd01[nu].real
+    U1U2_modsqd01[nu] = U1U2_modsqd01[nu].real
+
+    print('check U2U1_modsqd01 == U1U2_modsqd01')
+    print(U2U1_modsqd01[nu])
+    print(U1U2_modsqd01[nu])
+
+    
     ###be more complete
     print('vac prob check')                                     
     print(Pee_vac[nu]+Pem_vac[nu]+Pet_vac[nu])                          
@@ -949,8 +996,16 @@ for nu2 in range(N):
     #diff_em_PiecewiseSingle[nu2] = (Pem[nu2] - Pem_single_matter[nu2])/av_em
 
 
+fig16 =plt.figure(16)
+plt.plot(EE, U2U1_modsqd01, color='b', label='(0,1) of |U2U1|^2 ')
+plt.plot(EE, U1U2_modsqd01, color='m',linestyle='dashed', label='(0,1) of |U1U2|^2 ')
+plt.legend(fontsize=10)
 
-
+plt.xlabel('                                  Energy (GeV)')
+#plt.show()
+#fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_CP90/off_dig_mod_sq.jpg')
+    
+"""
 
 fig100 =plt.figure(100)
 plt.plot(EE, diff_Pme_in_de_piecewise_matter, color='m',linestyle='dashed', label='diff_Pme_propVSimprop')
@@ -1451,7 +1506,9 @@ plt.plot(EE, Pte, color='y',linestyle='dashed', label='P_te increasing constant 
 plt.title("increasing constant matter prob: nu_tau and nu_e ",fontsize=10)
 plt.xlabel('                                  Energy (GeV)')
 plt.legend(fontsize=10)
-#"""
+"""
+
+"""
 plt.show()
 #
 #time_invar_propVSimprop/3_flavor_oscillations_10^-4V_CP90
@@ -1542,7 +1599,7 @@ fig150.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_f
 
 
 #plt.close()
-"""
+
 plt.close(fig1)
 plt.close(fig2)
 plt.close(fig3)

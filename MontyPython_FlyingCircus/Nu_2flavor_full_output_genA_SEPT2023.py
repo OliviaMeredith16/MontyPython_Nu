@@ -13,7 +13,7 @@ fw = open(filename, 'w')
 filename = 'output_2F_10-4V_U1U2_U2U1_flipped.txt'
 fr = open(filename, 'w')
 
-def Unitary_matrix(energy, flavors, potential, baseline):    
+def Unitary_matrix(energy, flavors, potential, baseline,potential_off):    
     from sympy import sin, cos, symbols
     from numpy.linalg import eig
 
@@ -21,6 +21,7 @@ def Unitary_matrix(energy, flavors, potential, baseline):
     #from sin2thetaSquared of 0.8 we get Theta value
     #flavors = 2
     A = potential
+    B = potential_off
     #L, dmSq, EE, Theta = symbols('L dmSq EE Theta')
     L = baseline
     dmSq = 0.001 #0.0547723
@@ -44,8 +45,8 @@ def Unitary_matrix(energy, flavors, potential, baseline):
     Gamma = Alpha*math.cos(Theta)*math.sin(Theta)
     Eta = Alpha*math.cos(Theta)*math.cos(Theta)
 
-    AA2 = np.array([[(5.076)*A , 0],
-                   [0, 0]])
+    AA2 = np.array([[(5.076)*A , (5.076)*B],
+                   [(5.076)*np.conjugate(B), 0]])
     #matrix setup + eigensystem
     AA1 = np.array([[Beta , Gamma], 
                    [Gamma, Eta]])
@@ -56,8 +57,12 @@ def Unitary_matrix(energy, flavors, potential, baseline):
 
 #    print('E-value:', val)
  #   print('E-vector', vec)
-  #  print(' ')
-
+ 
+   # print('AA check')
+#    tc = np.transpose(np.conjugate(AA))
+ #   print(AA)
+  #  print(tc)
+   # print(AA*tc)
     #ON check
 #    for a in range(flavors):
  #       for b in range(flavors):
@@ -192,10 +197,11 @@ def Unitary_matrix(energy, flavors, potential, baseline):
         Dig = np.array(di)
         #print(Dig)
         #print(' ')
-
+#        print('HERE')
         t = np.dot(u_dtest,np.dot(Dig,u_test))
-        #print(t)
-        #print(' ')
+        print(t)
+ #       print(np.transpose(np.conjugate(t)) )
+  #      print(t*np.transpose(np.conjugate(t)))
         #print(AA)
         #print(' ')
 
@@ -329,6 +335,8 @@ L = [0.0] * N
 types = 2
 V1 = 0.000107
 V2 = 0.000107*3.0
+V1_off = complex(0.000107,0.000307)
+V2_off = V1_off*3.0
 max_energy = 5.0
 Step_size = (max_energy-0.5)/(N)
 Step_size_L = (2000.0-0.0)/(N)
@@ -378,8 +386,8 @@ for nu in range(N):
     print(nu,file=fc)
     print(nu,file=fd)
     EE[nu] = 0.5 + Step_size*nu
-    Unitary1[nu] = Unitary_matrix(EE[nu], types, V1, LL1)
-    Unitary2[nu] = Unitary_matrix(EE[nu], types, V2, LL2)
+    Unitary1[nu] = Unitary_matrix(EE[nu], types, V1, LL1,V1_off)
+    Unitary2[nu] = Unitary_matrix(EE[nu], types, V2, LL2,V2_off)
 
     print('U1')
     print(Unitary1[nu])
@@ -431,14 +439,15 @@ for nu in range(N):
     #print(' ')
     Unitary_total_reversed[nu] = U_multiply(Unitary2[nu],Unitary1[nu],types)
 
+    print('U1U2')
+    print(Unitary_total_reversed[nu])
 
     print(Unitary1[nu])
     print(Unitary2[nu])
-#    print(Unitary3[nu])
+ #   print(Unitary3[nu])
     print(Unitary_total_reversed[nu])
     print(Unitary_total[nu])
-    print('U1U2')
-    print(Unitary_total_reversed[nu])
+
     Pee_reversed[nu] = probEE(Unitary_total_reversed[nu], types)
     Pmm_reversed[nu] = probMM(Unitary_total_reversed[nu], types)
     Pme_reversed[nu] = probME(Unitary_total_reversed[nu], types)
@@ -480,8 +489,7 @@ for nu in range(N):
 
     U2U1_modsqd01[nu]= U2U1_modsqd01[nu].real
     U1U2_modsqd01[nu] = U1U2_modsqd01[nu].real
-
-
+    
     print('check U2U1_modsqd01 == U1U2_modsqd01')
     print(U2U1_modsqd01[nu])
     print(U1U2_modsqd01[nu])
@@ -490,7 +498,7 @@ for nu in range(N):
  #   print(rUT01R[nu])
   #  print(rUT10R[nu])
    # print(rUT11R[nu])
-    
+    """
     if abs(Unitary_total[nu][0][0] - np.conjugate(Unitary_total_reversed[nu][0][0])) <0.000001:
         if abs(Unitary_total[nu][1][1] - np.conjugate(Unitary_total_reversed[nu][1][1])) <0.000001:
             if abs(Unitary_total[nu][1][0] - np.conjugate(Unitary_total_reversed[nu][0][1])) <0.000001:
@@ -525,7 +533,7 @@ for nu in range(N):
         
     print(Unitary_total[nu] - Unitary_total_reversed[nu])
 
-
+"""
 
     
    # print('prob check')
@@ -534,7 +542,7 @@ for nu in range(N):
     #print(' ')
 
     #print('ignore after here ')    
-    Unitary_single_matter[nu] = Unitary_matrix(EE[nu], types, V1,2000)
+    Unitary_single_matter[nu] = Unitary_matrix(EE[nu], types, V1,2000,V1_off)
 
     Pee_single_matter[nu] = probEE(Unitary_single_matter[nu], types)
     Pmm_single_matter[nu] = probMM(Unitary_single_matter[nu], types)
@@ -545,7 +553,7 @@ for nu in range(N):
     #print(Pee_single_matter[nu]+Pem_single_matter[nu])
     #print(Pem_single_matter[nu]+Pmm_single_matter[nu])
     #print(' ')
-    Unitary_vac[nu] = Unitary_matrix(EE[nu], types, 0.0, 2000)
+    Unitary_vac[nu] = Unitary_matrix(EE[nu], types, 0.0, 2000,0.0)
 
     Pee_vac[nu] = probEE(Unitary_vac[nu], types)
     Pmm_vac[nu] = probMM(Unitary_vac[nu], types)
@@ -740,7 +748,11 @@ plt.legend(fontsize=10)
 fig16 =plt.figure(16)
 plt.plot(EE, U2U1_modsqd01, color='b', label='(0,1) of |U2U1|^2 ')
 plt.plot(EE, U1U2_modsqd01, color='m',linestyle='dashed', label='(0,1) of |U1U2|^2 ')
+#plt.plot(EE, Pme_reversed, color='g', label='P_me Reversed')                                                                    
+#plt.plot(EE, Pem_reversed, color='y', linestyle='dashed',label='P_em Reversed')                                                 
+#plt.title("decreasing piecewise matter potential and vacuum",fontsize=10)                                                       
 plt.legend(fontsize=10)
+
 
 
 #txt="V1 = 1.07*10^-5 eV^2/GeV, V2 = 3.57*10^-6 eV^2/GeV, L1 = 800 km, L2 = 1200 km         "#)# step-down ')
@@ -752,28 +764,30 @@ plt.xlabel('                                  Energy (GeV)')
 #axis[1, 1].xlabel('                                  Energy (GeV)')
 #axis[1, 2].xlabel('                                  Energy (GeV)')
 #plt.text(0.6,1,txt,fontsize = 7)
-plt.show()
 """
-fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/off_dig_mod_sq.jpg')
+plt.show()
 
+fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/off_dig_mod_sq.jpg')
 
-fig1.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/Vacuum.jpg')
-fig2.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/Constant_matter.jpg')
-fig3.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/Increasing_Piecewise_Constant_Matter.jpg')
-fig4.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/Decreasing_Piecewise_Constant_Matter.jpg')
-fig5.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/difference_Vacuum_Constant_Matter.jpg')
-fig6.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/P_me_minus_P_em_increasing_piecewise.jpg')
-fig7.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/P_me_minus_P_em_decreasing_piecewise.jpg')
-fig8.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/P_me_minus_P_em_increasing_to_decreasing_piecewise.jpg')
-fig9.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/difference_Increasing_Piecewise_single_constant_potential.jpg')
-fig10.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/difference_Decreasing_Piecewise_single_constant_potential.jpg')
-fig11.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/difference_Increasing_Piecewise_vacuum.jpg')
-fig12.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/difference_Decreasing_Piecewise_vacuum.jpg')
-fig13.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/Vac_single_matter.jpg')
-fig14.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/Vac_increasing_piecewise.jpg')
-fig15.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/Vac_decreasing_piecewise.jpg')
+fig1.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/Vacuum.jpg')
+fig2.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/Constant_matter.jpg')
+fig3.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/Increasing_Piecewise_Constant_Matter.jpg')
+fig4.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/Decreasing_Piecewise_Constant_Matter.jpg')
+fig5.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/difference_Vacuum_Constant_Matter.jpg')
+fig6.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/P_me_minus_P_em_increasing_piecewise.jpg')
+fig7.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/P_me_minus_P_em_decreasing_piecewise.jpg')
+fig8.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/P_me_minus_P_em_increasing_to_decreasing_piecewise.jpg')
+fig9.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/difference_Increasing_Piecewise_single_constant_potential.jpg')
+fig10.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/difference_Decreasing_Piecewise_single_constant_potential.jpg')
+fig11.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/difference_Increasing_Piecewise_vacuum.jpg')
+fig12.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/difference_Decreasing_Piecewise_vacuum.jpg')
+fig13.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/Vac_single_matter.jpg')
+fig14.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/Vac_increasing_piecewise.jpg')
+fig15.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/Vac_decreasing_piecewise.jpg')
               
 """
+
+
 """
 fig16 =plt.figure(16)                                                                                                         
 plt.plot(EE, U1_modsqd01, color='b', label='|U1(0,1)|^2 ')
@@ -862,9 +876,9 @@ plt.xlabel('                                  Energy (GeV)')
 #plt.plot(EE, UT11_con, color='y',linestyle='dashdot', label='U2U1(1,1) conjugate ')
 plt.show()  
 
-fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/MOD_check.jpg')
-fig17.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/CONreal_check.jpg')
-fig18.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/CONimag_check.jpg')
-fig19.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/TRAreal_check.jpg')
-fig20.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V/Traimage_check.jpg')
+fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/MOD_check.jpg')
+fig17.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/CONreal_check.jpg')
+fig18.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/CONimag_check.jpg')
+fig19.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/TRAreal_check.jpg')
+fig20.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_genA/Traimage_check.jpg')
 """

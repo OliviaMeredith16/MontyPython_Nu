@@ -374,6 +374,12 @@ U2_modsqd10 = [0.0] * N
 U1_modsqd00 = [0.0] * N
 U2_modsqd00 = [0.0] * N
 
+
+U3_modsqd01 = [0.0] * N
+U3_modsqd10 = [0.0] * N
+U3_modsqd00 = [0.0] * N
+
+
 U1U2_modsqd01 = [0.0] * N
 U2U1_modsqd01 = [0.0] * N
 #for val in range(N):
@@ -392,20 +398,34 @@ for nu in range(N):
     print(Unitary1[nu])
     print('U2')
     print(Unitary2[nu])
+    print('U3')
+    print(Unitary3[nu])
+
     U1_modsqd00[nu] = (Unitary1[nu][0][0]*np.conjugate(Unitary1[nu][0][0])).real
-    U2_modsqd00[nu] = (Unitary1[nu][0][0]*np.conjugate(Unitary2[nu][0][0])).real
-
+    U2_modsqd00[nu] = (Unitary2[nu][0][0]*np.conjugate(Unitary2[nu][0][0])).real
+    U3_modsqd00[nu] = (Unitary3[nu][0][0]*np.conjugate(Unitary3[nu][0][0])).real
+    
     U1_modsqd01[nu] = (Unitary1[nu][0][1]*np.conjugate(Unitary1[nu][0][1])).real
-    U2_modsqd01[nu] = (Unitary1[nu][0][1]*np.conjugate(Unitary2[nu][0][1])).real
+    U2_modsqd01[nu] = (Unitary2[nu][0][1]*np.conjugate(Unitary2[nu][0][1])).real
     U1_modsqd10[nu] = (Unitary1[nu][1][0]*np.conjugate(Unitary1[nu][1][0])).real
-    U2_modsqd10[nu] = (Unitary1[nu][1][0]*np.conjugate(Unitary2[nu][1][0])).real
+    U2_modsqd10[nu] = (Unitary2[nu][1][0]*np.conjugate(Unitary2[nu][1][0])).real
+    U3_modsqd01[nu] = (Unitary3[nu][0][1]*np.conjugate(Unitary3[nu][0][1])).real
+    U3_modsqd10[nu] = (Unitary3[nu][1][0]*np.conjugate(Unitary3[nu][1][0])).real
 
-    print('testing U1 diag mod terms')
+    
+    print('testing U diag mod terms')
     print(U1_modsqd01[nu])
     print(U1_modsqd10[nu])
+    print(U2_modsqd01[nu])
+    print(U2_modsqd10[nu])
+    print(U3_modsqd01[nu])
+    print(U3_modsqd10[nu])
     print('unitarity check')
     print(U1_modsqd00[nu]+U1_modsqd01[nu])
     print(U2_modsqd00[nu]+U2_modsqd01[nu])
+    print(U3_modsqd00[nu]+U3_modsqd01[nu])
+
+
 
     
     u1 = Unitary1[nu]
@@ -421,7 +441,7 @@ for nu in range(N):
     
     #    Unitary3[nu] = Unitary_matrix(EE[nu], types, V1*3.0, 1200)
     Unitary_total[nu] = U_multiply(Unitary1[nu],Unitary2[nu],Unitary3[nu],types)
-    print('U2U1')
+    print('U3U2U1')
     print(Unitary_total[nu])
 
     Pee[nu] = probEE(Unitary_total[nu], types)
@@ -430,13 +450,17 @@ for nu in range(N):
     Pem[nu] = probEM(Unitary_total[nu], types)
 
 
-    #print('prob check')
-    #print(Pee[nu]+Pem[nu])
-    #print(Pem[nu]+Pmm[nu])
-    #print(' ')
+    print('prob check')
+    print(Pee[nu]+Pem[nu])
+    print(Pem[nu]+Pmm[nu])
+    print(' ')
     Unitary_total_reversed[nu] = U_multiply(Unitary3[nu],Unitary2[nu],Unitary1[nu],types)
-    
-    print('U1U2')
+    print(Unitary1[nu])
+    print(Unitary2[nu])
+    print(Unitary3[nu])
+    print(Unitary_total_reversed[nu])
+    print(Unitary_total[nu]) 
+    print('U1U2U3')
     print(Unitary_total_reversed[nu])
     Pee_reversed[nu] = probEE(Unitary_total_reversed[nu], types)
     Pmm_reversed[nu] = probMM(Unitary_total_reversed[nu], types)
@@ -473,37 +497,44 @@ for nu in range(N):
     iUT10[nu] = (Unitary_total[nu][1][0]).imag
     iUT11[nu] = (Unitary_total[nu][1][1]).imag
 
-
+    #technically it's U3U2U1 and U1U2U3
     U2U1_modsqd01[nu] = Unitary_total[nu][0][1]*np.conjugate(Unitary_total[nu][0][1])
     U1U2_modsqd01[nu] = Unitary_total_reversed[nu][0][1]*np.conjugate(Unitary_total_reversed[nu][0][1])
 
-    print('check U2U1_modsqd01 == U1U2_modsqd01')
+
+    U2U1_modsqd01[nu]= U2U1_modsqd01[nu].real
+    U1U2_modsqd01[nu] = U1U2_modsqd01[nu].real
+    
+    print('check U3U2U1_modsqd01 == U1U2U3_modsqd01')
     print(U2U1_modsqd01[nu])
     print(U1U2_modsqd01[nu])
+
+
+
     
 #    print(rUT00R[nu])
  #   print(rUT01R[nu])
   #  print(rUT10R[nu])
    # print(rUT11R[nu])
-    
+    """
     if abs(Unitary_total[nu][0][0] - np.conjugate(Unitary_total_reversed[nu][0][0])) <0.000001:
         if abs(Unitary_total[nu][1][1] - np.conjugate(Unitary_total_reversed[nu][1][1])) <0.000001:
             if abs(Unitary_total[nu][1][0] - np.conjugate(Unitary_total_reversed[nu][0][1])) <0.000001:
                 if abs(Unitary_total[nu][0][1] - np.conjugate(Unitary_total_reversed[nu][1][0])) <0.000001:
-                    print('U1U2 and U2U1 are complex conjuagates of each other at ', nu,EE[nu],file=fd)
+              #      print('U1U2 and U2U1 are complex conjuagates of each other at ', nu,EE[nu],file=fd)
 
     if abs(Unitary_total[nu][0][0] - np.conjugate(Unitary_total_reversed[nu][0][0])) <0.000001:
         if abs(Unitary_total[nu][1][1] - np.conjugate(Unitary_total_reversed[nu][1][1])) <0.000001:
             if abs(Unitary_total[nu][1][0] - np.conjugate(Unitary_total_reversed[nu][1][0])) <0.000001:
                 if abs(Unitary_total[nu][0][1] - np.conjugate(Unitary_total_reversed[nu][0][1])) <0.000001:
-                    print('U1U2 and U2U1 are conjuagates of each other at ', nu,EE[nu],file=fc)
+               #     print('U1U2 and U2U1 are conjuagates of each other at ', nu,EE[nu],file=fc)
 
     if abs(Unitary_total[nu][0][0] - Unitary_total_reversed[nu][0][0]) <0.000001:
         if abs(Unitary_total[nu][1][1] - Unitary_total_reversed[nu][1][1]) <0.000001:
             if abs(Unitary_total[nu][1][0] - Unitary_total_reversed[nu][0][1]) <0.000001:
                 if abs(Unitary_total[nu][0][1] - Unitary_total_reversed[nu][1][0]) <0.000001:
-                    print('U1U2 and U2U1 are transposes of each other at ', nu,EE[nu],file=f)    
-
+                #    print('U1U2 and U2U1 are transposes of each other at ', nu,EE[nu],file=f)    
+"""
     v01 = 0.0
     v10  = 0.0 
     v01 = Unitary_total[nu][0][1] - Unitary_total_reversed[nu][0][1]
@@ -511,14 +542,14 @@ for nu in range(N):
 
     n01 = Unitary_total[nu][0][1] - Unitary_total_reversed[nu][1][0]
     n10 = Unitary_total[nu][0][1] - Unitary_total_reversed[nu][1][0]
-    if v01 +v10 <0.01:
-        print('U2U1 - U1U2: 0,1 is the negative of 1,0 at ', nu,EE[nu],file=fw)
+   # if v01 +v10 <0.01:
+        #print('U2U1 - U1U2: 0,1 is the negative of 1,0 at ', nu,EE[nu],file=fw)
 
-    if n10<0.01:
-        if n01<0.01:
-            print('U2U1(0,1) = U1U2(1,0) and U2U1(1,0) = U1U2(0,1) at ', nu,EE[nu],file=fr)    
+    #if n10<0.01:
+     #   if n01<0.01:
+         #   print('U2U1(0,1) = U1U2(1,0) and U2U1(1,0) = U1U2(0,1) at ', nu,EE[nu],file=fr)    
         
-    print(Unitary_total[nu] - Unitary_total_reversed[nu])
+    #print(Unitary_total[nu] - Unitary_total_reversed[nu])
 
 
 
@@ -578,10 +609,10 @@ for nu2 in range(N):
     diff[nu2] =(Pme[nu2]-Pem[nu2])/av_me
     diff_b[nu2] =(Pme_reversed[nu2]-Pem_reversed[nu2])/av_me_r
     print(EE[nu2])
-    print(Pem[nu2])
-    print(Pem_reversed[nu2])
-    print(Pem[nu2]-Pem_reversed[nu2])
-    print(' ')
+    #print(Pem[nu2])
+    #print(Pem_reversed[nu2])
+    #print(Pem[nu2]-Pem_reversed[nu2])
+    #print(' ')
     
     diff_me_PiecewiseVac_r[nu2] = (Pme_reversed[nu2]-Pme_vac[nu2])/av_me_r
     diff_em_PiecewiseVac_r[nu2] = (Pem_reversed[nu2]-Pem_vac[nu2])/av_em_r
@@ -719,6 +750,19 @@ plt.plot(EE, Pme_reversed, color='g', label='P_me Reversed')
 plt.plot(EE, Pem_reversed, color='y', linestyle='dashed',label='P_em Reversed')
 plt.title("decreasing piecewise matter potential and vacuum",fontsize=10)
 plt.legend(fontsize=10)
+
+
+fig16 =plt.figure(16)
+plt.plot(EE, U2U1_modsqd01, color='b', label='(0,1) of |U3U2U1|^2 ')
+plt.plot(EE, U1U2_modsqd01, color='m',linestyle='dashed', label='(0,1) of |U1U2U3|^2 ')
+#plt.plot(EE, Pme_reversed, color='g', label='P_me Reversed')
+#plt.plot(EE, Pem_reversed, color='y', linestyle='dashed',label='P_em Reversed')
+#plt.title("decreasing piecewise matter potential and vacuum",fontsize=10)
+plt.legend(fontsize=10)
+
+
+#U2U1_modsqd01
+
 #axis[0, 1].legend(fontsize=5)
 #axis[0, 2].legend(fontsize=5)
 #axis[1, 0].legend(fontsize=5)
@@ -743,6 +787,10 @@ plt.xlabel('                                  Energy (GeV)')
 #axis[1, 1].xlabel('                                  Energy (GeV)')
 #axis[1, 2].xlabel('                                  Energy (GeV)')
 #plt.text(0.6,1,txt,fontsize = 7)
+"""
+fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/off_dig_mod_sq.jpg') 
+
+
 plt.show()
 
 fig1.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Vacuum.jpg')
@@ -761,7 +809,7 @@ fig13.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_fl
 fig14.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Vac_increasing_piecewise.jpg')
 fig15.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Vac_decreasing_piecewise.jpg')
               
-
+"""
 """
 fig16 =plt.figure(16)                                                                                                         
 plt.plot(EE, U1_modsqd01, color='b', label='|U1(0,1)|^2 ')
