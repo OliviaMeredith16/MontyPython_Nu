@@ -261,8 +261,8 @@ def U_multiply(matrix1, matrix2, matrix3,flavors):
     U1_matrix = matrix1
     U2_matrix = matrix2
     U3_matrix = matrix3
-
-    U_total = np.dot(U3_matrix,U2_matrix,U1_matrix)
+    t = np.dot(U2_matrix,U1_matrix)
+    U_total = np.dot(U3_matrix,t)
     return(U_total)
 
 N = 1000
@@ -760,6 +760,14 @@ plt.plot(EE, U1U2_modsqd01, color='m',linestyle='dashed', label='(0,1) of |U1U2U
 #plt.title("decreasing piecewise matter potential and vacuum",fontsize=10)
 plt.legend(fontsize=10)
 
+fig60 =plt.figure(60)
+plt.plot(EE, Pme, color='b', label='P_me increasing constant matter ')
+plt.plot(EE, Pme_reversed, color='r',linestyle='dashed', label='P_me decreasing constant matter ')
+plt.plot(EE, Pem, color='g', linestyle='dotted',label='P_em increasing constant matter ')
+plt.plot(EE, Pem_reversed, color='y',linestyle='dashdot', label='P_em decreasing constant matter ')
+plt.title("piecewise constant matter prob: nu_e and nu_mu ",fontsize=10)
+plt.xlabel('                                  Energy (GeV)')
+plt.legend(fontsize=10)
 
 #U2U1_modsqd01
 
@@ -787,29 +795,32 @@ plt.xlabel('                                  Energy (GeV)')
 #axis[1, 1].xlabel('                                  Energy (GeV)')
 #axis[1, 2].xlabel('                                  Energy (GeV)')
 #plt.text(0.6,1,txt,fontsize = 7)
-"""
-fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/off_dig_mod_sq.jpg') 
+
+plt.show()  
 
 
-plt.show()
+fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/off_dig_mod_sq.jpg') 
 
-fig1.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Vacuum.jpg')
-fig2.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Constant_matter.jpg')
-fig3.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Increasing_Piecewise_Constant_Matter.jpg')
-fig4.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Decreasing_Piecewise_Constant_Matter.jpg')
-fig5.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/difference_Vacuum_Constant_Matter.jpg')
-fig6.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/P_me_minus_P_em_increasing_piecewise.jpg')
-fig7.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/P_me_minus_P_em_decreasing_piecewise.jpg')
-fig8.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/P_me_minus_P_em_increasing_to_decreasing_piecewise.jpg')
-fig9.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/difference_Increasing_Piecewise_single_constant_potential.jpg')
-fig10.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/difference_Decreasing_Piecewise_single_constant_potential.jpg')
-fig11.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/difference_Increasing_Piecewise_vacuum.jpg')
-fig12.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/difference_Decreasing_Piecewise_vacuum.jpg')
-fig13.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Vac_single_matter.jpg')
-fig14.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Vac_increasing_piecewise.jpg')
-fig15.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Vac_decreasing_piecewise.jpg')
+
+fig1.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Vacuum.jpg')
+fig2.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Constant_matter.jpg')
+fig3.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Increasing_Piecewise_Constant_Matter.jpg')
+fig4.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Decreasing_Piecewise_Constant_Matter.jpg')
+fig5.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/difference_Vacuum_Constant_Matter.jpg')
+fig6.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/P_me_minus_P_em_increasing_piecewise.jpg')
+fig7.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/P_me_minus_P_em_decreasing_piecewise.jpg')
+fig8.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/P_me_minus_P_em_increasing_to_decreasing_piecewise.jpg')
+fig9.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/difference_Increasing_Piecewise_single_constant_potential.jpg')
+fig10.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/difference_Decreasing_Piecewise_single_constant_potential.jpg')
+fig11.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/difference_Increasing_Piecewise_vacuum.jpg')
+fig12.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/difference_Decreasing_Piecewise_vacuum.jpg')
+fig13.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Vac_single_matter.jpg')
+fig14.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Vac_increasing_piecewise.jpg')
+fig15.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Vac_decreasing_piecewise.jpg')
               
-"""
+
+
+fig60.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Pem_Pem_Im_P_COMPARE.jpg')
 """
 fig16 =plt.figure(16)                                                                                                         
 plt.plot(EE, U1_modsqd01, color='b', label='|U1(0,1)|^2 ')
@@ -898,9 +909,9 @@ plt.xlabel('                                  Energy (GeV)')
 #plt.plot(EE, UT11_con, color='y',linestyle='dashdot', label='U2U1(1,1) conjugate ')
 plt.show()  
 
-fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/MOD_check.jpg')
-fig17.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/CONreal_check.jpg')
-fig18.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/CONimag_check.jpg')
-fig19.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/TRAreal_check.jpg')
-fig20.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/2_flavor_oscillations_10^-4V_3steps/Traimage_check.jpg')
+fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/MOD_check.jpg')
+fig17.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/CONreal_check.jpg')
+fig18.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/CONimag_check.jpg')
+fig19.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/TRAreal_check.jpg')
+fig20.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/2_flavor_oscillations_10^-4V_3steps/Traimage_check.jpg')
 """

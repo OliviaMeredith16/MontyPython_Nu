@@ -125,61 +125,6 @@ def Unitary_matrix(energy, flavors, potential, baseline):
 
         for a3 in range(flavors):
             proj[a3] = Id
-#            print(proj[a3])
-#        print(Id)
-        #3x3 identity matrix                                                      
-            #Ident3 = np.array([[1.0, 0.0, 0.0],
-            #                  [0.0, 1.0, 0.0],
-            #                   [0.0, 0.0, 1.0]])
-
-        #projction operators
-            #for f in range(flavors-1):
-            #    proj[f] = 1
-            #   for k in range(flavors):
-            #        if k == f:
-            #           continue
-            #      if k != f:
-        #         proj[f] =*(AA - val[k]*Id)/(val[f]-val[k])
-
-        #print(proj[f])        
-        #print(' ')
-            
-        ##for a1 in range(flavors):
-          ##  for a2 in range(flavors):
-            ##    if a1 != a2:
-           ##         proj[a1] = np.dot(proj[a1],( (AA - val[a2]*Id)/(val[a1]-val[a2]) ) ) 
-             ##   if a1 == a2:
-               ##     continue 
-#                print(a2)
- #               print(a1)
-      #  print(" ")
-    
-        #proj[0] = (AA - val[1]*Id)/(val[0]-val[1])
-        #proj[1] = (AA - val[0]*Id)/(val[1]-val[0])
-
-        #for f in range(flavors-1):
-        #   for k in range(flavors-1):
-        #      proj[f] *= (AA - val[k+1]*Id)/(val[f]-val[k+1])#*(AA - val[2]*Ident)/(val[0]-val[2])
-        # proj2 *= (AA - val[f]*Id)/(val[1]-val[f])#*(AA - val[2]*Ident3)/(val[1]-val[2])
-        #if f == 1:
-        #   proj2 *= (AA - val[f+1]*Id)/(val[1]-val[f+1])
-        #proj[2] = (AA - val[0]*Ident3)/(val[2]-val[0])*(AA - val[1]*Ident3)/(val[2]-val[1])
-
-        #full unitary evolution matrix
-        ##for g in range(flavors):   
-          ##U_s[g] = np.exp(arg_exp*val[g])*proj[g]# + np.exp(arg_exp*val[1])*proj[1]
-            #+ np.exp(arg_exp*val[2])*proj[2]
-#            print(U_s[g])
-        #print(' ')
-
-        ##for h in range(flavors):
-          ##  U_f += U_s[h]
-    
-       # print(' unitary evolution matrix ')
-        #print(U_f)
-        #print(' ')
-
-        #check everything is working right
 
         #for row construction and U_dagger
         for t1 in range(flavors):
@@ -188,11 +133,6 @@ def Unitary_matrix(energy, flavors, potential, baseline):
 
         print(u_dtest)
         print('U dag ')
-                #print(vec[0])
-                #print(vec[1])
-        #print('matrix for U_dagger')
-        #print(u_dtest)  
-        
         u_dtest2 = np.array(u_dtest)
         u_test = np.conjugate(np.transpose(u_dtest2))
         print(u_dtest2)
@@ -227,7 +167,7 @@ def Unitary_matrix(energy, flavors, potential, baseline):
     
 
 
-    #####
+    
 def probEE(matrix, flavors):
     from sympy import sin, cos, symbols
     from numpy.linalg import eig
@@ -335,8 +275,9 @@ def U_multiply(matrix1, matrix2, matrix3,flavors):
     U1_matrix = matrix1
     U2_matrix = matrix2
     U3_matrix = matrix3
-
-    U_total = np.dot(U3_matrix,U2_matrix,U1_matrix)
+    t = np.dot(U2_matrix,U1_matrix)
+    U_total = np.dot(U3_matrix,t)
+#    U_total = np.dot(U3_matrix,U2_matrix,U1_matrix)
     return(U_total)    
 N = 1000
 EE = [0.0] * N
@@ -490,7 +431,7 @@ L = [0.0] * N
 types = 3
 V1 = 0.000107#0.0000107*3.0
 V2 = 0.000107*3.0
-V3 = 0.000107*6.0
+V3 = 0.000107#*6.0
 max_energy = 5.0
 Step_size = (max_energy-0.5)/(N)
 Step_size_L = (2000.0-0.0)/(N)
@@ -631,7 +572,8 @@ for nu in range(N):
     Unitary2[nu] = Unitary_matrix(EE[nu], types, V2, LL2)
     Unitary3[nu] = Unitary_matrix(EE[nu], types, V3, LL3)
     Unitary_total[nu] = U_multiply(Unitary1[nu],Unitary2[nu],Unitary3[nu],types)
-    
+
+    #increasing constant matter
     Pee[nu] = probEE(Unitary_total[nu], types)
     Pmm[nu] = probMM(Unitary_total[nu], types)
     Pme[nu] = probME(Unitary_total[nu], types)
@@ -646,34 +588,11 @@ for nu in range(N):
 
 
     
-    e_appearance_increase_piecewise_matter[nu] = Pme[nu] + Pte[nu]
-    m_appearance_increase_piecewise_matter[nu] = Pem[nu] + Ptm[nu]
-    t_appearance_increase_piecewise_matter[nu] = Pet[nu] + Pmt[nu]
-
-    e_disappearance_increase_piecewise_matter[nu] = Pem[nu] + Pet[nu]
-    m_disappearance_increase_piecewise_matter[nu] = Pme[nu] + Pmt[nu]
-    t_disappearance_increase_piecewise_matter[nu] = Pte[nu] + Ptm[nu]
-
     
     Unitary_total_reversed[nu] = U_multiply(Unitary3[nu],Unitary2[nu],Unitary1[nu],types)
+    #decreasing constant matter    
 
-
-    print(Unitary1[nu])
-    print(Unitary2[nu])
-    print(Unitary3[nu])
-    print(Unitary_total_reversed[nu])
-    print(Unitary_total[nu])
-#    if Unitary1[nu].all() == np.transpose(Unitary1[nu]).all():
- #       print('Unitary1 is symmetric!')
-  #  if Unitary2[nu].all( )== np.transpose(Unitary2[nu]).all():
-   #     print('Unitary2 is symmetric!')
-    #if Unitary3[nu].all( )== np.transpose(Unitary3[nu]).all():
-     #   print('Unitary3 is symmetric!')
-    #if Unitary_total[nu].all()== np.transpose(Unitary_total[nu]).all():
-     #   print('U3U2U1 is symmetric!')
-    #if Unitary_total_reversed[nu].all() == np.transpose(Unitary_total_reversed[nu]).all():
-     #   print('U1U2U3 is symmetric!')
-
+    
     Pee_reversed[nu] = probEE(Unitary_total_reversed[nu], types)
     Pmm_reversed[nu] = probMM(Unitary_total_reversed[nu], types)
     Pme_reversed[nu] = probME(Unitary_total_reversed[nu], types)
@@ -686,17 +605,9 @@ for nu in range(N):
     Pet_reversed[nu] = probET(Unitary_total_reversed[nu], types)
 
 
-    e_appearance_decrease_piecewise_matter[nu] = Pme_reversed[nu] + Pte_reversed[nu]
-    m_appearance_decrease_piecewise_matter[nu] = Pem_reversed[nu] + Ptm_reversed[nu]
-    t_appearance_decrease_piecewise_matter[nu] = Pet_reversed[nu] + Pmt_reversed[nu]
-
-    e_disappearance_decrease_piecewise_matter[nu] = Pem_reversed[nu] + Pet_reversed[nu]
-    m_disappearance_decrease_piecewise_matter[nu] = Pme_reversed[nu] + Pmt_reversed[nu]
-    t_disappearance_decrease_piecewise_matter[nu] = Pte_reversed[nu] + Ptm_reversed[nu]
-
     
     Unitary_single_matter[nu] = Unitary_matrix(EE[nu], types, V1,2000)
-
+    #single matter
     Pee_single_matter[nu] = probEE(Unitary_single_matter[nu], types)
     Pmm_single_matter[nu] = probMM(Unitary_single_matter[nu], types)
     Pme_single_matter[nu] = probME(Unitary_single_matter[nu], types)
@@ -708,19 +619,11 @@ for nu in range(N):
     Ptm_single_matter[nu] = probTM(Unitary_single_matter[nu], types)
     Ptt_single_matter[nu] = probTT(Unitary_single_matter[nu], types)
 
-
-    e_appearance_single_matter[nu] = Pme_single_matter[nu] + Pte_single_matter[nu]
-    m_appearance_single_matter[nu] = Pem_single_matter[nu] + Ptm_single_matter[nu]
-    t_appearance_single_matter[nu] = Pet_single_matter[nu] + Pmt_single_matter[nu]
-
-    e_disappearance_single_matter[nu] = Pem_single_matter[nu] + Pet_single_matter[nu]
-    m_disappearance_single_matter[nu] = Pme_single_matter[nu] + Pmt_single_matter[nu]
-    t_disappearance_single_matter[nu] = Pte_single_matter[nu] + Ptm_single_matter[nu]
-
     
     
     Unitary_vac[nu] = Unitary_matrix(EE[nu], types, 0.0, 2000)
-
+    #vacuum
+    
     Pee_vac[nu] = probEE(Unitary_vac[nu], types)
     Pmm_vac[nu] = probMM(Unitary_vac[nu], types)
     Pme_vac[nu] = probME(Unitary_vac[nu], types)
@@ -733,14 +636,6 @@ for nu in range(N):
     Ptt_vac[nu] = probTT(Unitary_vac[nu], types)
 
 
-
-    e_appearance_vac[nu] = Pme_vac[nu] + Pte_vac[nu] 
-    m_appearance_vac[nu] = Pem_vac[nu] + Ptm_vac[nu]
-    t_appearance_vac[nu] = Pet_vac[nu] + Pmt_vac[nu]
-
-    e_disappearance_vac[nu] = Pem_vac[nu] + Pet_vac[nu]
-    m_disappearance_vac[nu] = Pme_vac[nu] + Pmt_vac[nu]
-    t_disappearance_vac[nu] = Pte_vac[nu] + Ptm_vac[nu]
 
     U3U2U1_modsqd01[nu] = Unitary_total[nu][0][1]*np.conjugate(Unitary_total[nu][0][1])
     U1U2U3_modsqd01[nu] = Unitary_total_reversed[nu][0][1]*np.conjugate(Unitary_total_reversed[nu][0][1])
@@ -785,12 +680,6 @@ for nu in range(N):
     print(Pem_reversed[nu]+Pmm_reversed[nu]+Ptm_reversed[nu])
     print(Pet_reversed[nu]+Pmt_reversed[nu]+Ptt_reversed[nu])
     print(' ')
-    #to_em_r += Pem_reversed[nu]
-    #to_me_r += Pme_reversed[nu]
-    #to_em += Pem[nu]
-    #to_me += Pme[nu]
-    #to_em_Single += Pem_single_matter[nu]
-    #to_me_Single += Pme_single_matter[nu]
     to_em_Vac += Pem_vac[nu]
     to_me_Vac += Pme_vac[nu]
     to_mm_Vac += Pmm_vac[nu]
@@ -834,12 +723,6 @@ for nu in range(N):
     av_et =to_et/N
     av_te =to_te/N
 
-    #av_em_r =to_em_r/N
-#av_me_r =to_me_r/N
-#av_em =to_em/N
-#av_me =to_me/N
-#av_em_Single =to_em_Single/N
-#av_me_Single =to_me_Single/N
 av_em_Vac =to_em_Vac/N
 av_me_Vac =to_me_Vac/N 
 
@@ -893,46 +776,6 @@ for nu2 in range(N):
 
 
 
-    
-
-    diff_single_Vac_e_appearance[nu2] = e_appearance_vac[nu2]-e_appearance_single_matter[nu2]
-    diff_single_Vac_m_appearance[nu2] = m_appearance_vac[nu2]-m_appearance_single_matter[nu2]
-    diff_single_Vac_t_appearance[nu2] = t_appearance_vac[nu2]-t_appearance_single_matter[nu2]
-
-    diff_single_Vac_e_disappearance[nu2] = e_disappearance_vac[nu2]-e_disappearance_single_matter[nu2]
-    diff_single_Vac_m_disappearance[nu2] = m_disappearance_vac[nu2]-m_disappearance_single_matter[nu2]
-    diff_single_Vac_t_disappearance[nu2] = t_disappearance_vac[nu2]-t_disappearance_single_matter[nu2]
-
-
-
-    diff_decrease_piecewise_Vac_e_appearance[nu2] = e_appearance_vac[nu2]-e_appearance_decrease_piecewise_matter[nu2]
-    diff_decrease_piecewise_Vac_m_appearance[nu2] = m_appearance_vac[nu2]-m_appearance_decrease_piecewise_matter[nu2]
-    diff_decrease_piecewise_Vac_t_appearance[nu2] = t_appearance_vac[nu2]-t_appearance_decrease_piecewise_matter[nu2]
-
-    diff_decrease_piecewise_Vac_e_disappearance[nu2] = e_disappearance_vac[nu2]-e_disappearance_decrease_piecewise_matter[nu2]
-    diff_decrease_piecewise_Vac_m_disappearance[nu2] = m_disappearance_vac[nu2]-m_disappearance_decrease_piecewise_matter[nu2]
-    diff_decrease_piecewise_Vac_t_disappearance[nu2] = t_disappearance_vac[nu2]-t_disappearance_decrease_piecewise_matter[nu2]
-
-
-    diff_increase_piecewise_Vac_e_appearance[nu2] = e_appearance_vac[nu2]-e_appearance_increase_piecewise_matter[nu2]
-    diff_increase_piecewise_Vac_m_appearance[nu2] = m_appearance_vac[nu2]-m_appearance_increase_piecewise_matter[nu2]
-    diff_increase_piecewise_Vac_t_appearance[nu2] = t_appearance_vac[nu2]-t_appearance_increase_piecewise_matter[nu2]
-
-    diff_increase_piecewise_Vac_e_disappearance[nu2] = e_disappearance_vac[nu2]-e_disappearance_increase_piecewise_matter[nu2]
-    diff_increase_piecewise_Vac_m_disappearance[nu2] = m_disappearance_vac[nu2]-m_disappearance_increase_piecewise_matter[nu2]
-    diff_increase_piecewise_Vac_t_disappearance[nu2] = t_disappearance_vac[nu2]-t_disappearance_increase_piecewise_matter[nu2]
-
-
-
-
-    diff_piecewise_e_appearance[nu2] = e_appearance_decrease_piecewise_matter[nu2]-e_appearance_increase_piecewise_matter[nu2]
-    diff_piecewise_m_appearance[nu2] = m_appearance_decrease_piecewise_matter[nu2]-m_appearance_increase_piecewise_matter[nu2]
-    diff_piecewise_t_appearance[nu2] = t_appearance_decrease_piecewise_matter[nu2]-t_appearance_increase_piecewise_matter[nu2]
-
-
-    diff_piecewise_e_disappearance[nu2] = e_disappearance_decrease_piecewise_matter[nu2]-e_disappearance_increase_piecewise_matter[nu2]
-    diff_piecewise_m_disappearance[nu2] = m_disappearance_decrease_piecewise_matter[nu2]-m_disappearance_increase_piecewise_matter[nu2]
-    diff_piecewise_t_disappearance[nu2] = t_disappearance_decrease_piecewise_matter[nu2]-t_disappearance_increase_piecewise_matter[nu2]
 
     diff_Pme_in_de_piecewise_matter[nu2] = (Pme_reversed[nu2]-Pme[nu2])/av_me
     diff_Pem_in_de_piecewise_matter[nu2] = (Pem_reversed[nu2]-Pem[nu2])/av_em
@@ -948,13 +791,6 @@ for nu2 in range(N):
     diff_Pet_in_de_piecewise_matter[nu2] = (Pet_reversed[nu2]-Pet[nu2])/av_et
     diff_PetPte_increase_piecewise_matter[nu2] = (Pte[nu2]-Pet[nu2])/av_te
     diff_PetPte_decrease_piecewise_matter[nu2] = (Pte_reversed[nu2]-Pet_reversed[nu2])/av_te_r
-
-
-
-
-
-
-
 
     
 
@@ -975,27 +811,11 @@ for nu2 in range(N):
     diff_vac_e[nu2] = e_appearance_vac[nu2]-e_disappearance_vac[nu2]
     diff_vac_m[nu2] = m_appearance_vac[nu2]-m_disappearance_vac[nu2]
     diff_vac_t[nu2] = t_appearance_vac[nu2]-t_disappearance_vac[nu2]
-    #   diff_me[nu2] =(Pme[nu2]- Pme_reversed[nu2])/av_me
-  #  diff_em[nu2] =(Pem[nu2]- Pem_reversed[nu2])/av_em
-   # diff[nu2] =(Pme[nu2]- Pem[nu2])/av_me
-    #diff_b[nu2] =(Pme_reversed[nu2]- Pem_reversed[nu2])/av_me_r
-
-    #diff_me_PiecewiseVac_r[nu2] = (Pme_reversed[nu2] - Pme_vac[nu2])/av_me_r
-    #diff_em_PiecewiseVac_r[nu2] = (Pem_reversed[nu2] - Pem_vac[nu2])/av_em_r
-    #diff_me_PiecewiseSingle_r[nu2] = (Pme_reversed[nu2] - Pme_single_matter[nu2])/av_me_r
-    #diff_em_PiecewiseSingle_r[nu2] = (Pem_reversed[nu2] - Pem_single_matter[nu2])/av_em_r
-
-    #diff_me_PiecewiseVac[nu2] = (Pme[nu2] - Pme_vac[nu2])/av_me
-    #diff_em_PiecewiseVac[nu2] = (Pem[nu2] - Pem_vac[nu2])/av_em
-    #diff_me_PiecewiseSingle[nu2] = (Pme[nu2] - Pme_single_matter[nu2])/av_me
-    #diff_em_PiecewiseSingle[nu2] = (Pem[nu2] - Pem_single_matter[nu2])/av_em
 
 fig16 =plt.figure(16)
 plt.plot(EE, U3U2U1_modsqd01, color='b', label='(0,1) of |U3U2U1|^2 ')
 plt.plot(EE, U1U2U3_modsqd01, color='m',linestyle='dashed', label='(0,1) of |U1U2U3|^2 ')
-          #plt.plot(EE, Pme_reversed, color='g', label='P_me Reversed')                                                                    
-#plt.plot(EE, Pem_reversed, color='y', linestyle='dashed',label='P_em Reversed')                                                 
-#plt.title("decreasing piecewise matter potential and vacuum",fontsize=10)                                                       
+                       
 plt.legend(fontsize=10)
           
 plt.xlabel('                                  Energy (GeV)')
@@ -1004,7 +824,7 @@ plt.xlabel('                                  Energy (GeV)')
 
 
 #plt.show()
-"""
+
 fig100 =plt.figure(100)
 plt.plot(EE, diff_Pme_in_de_piecewise_matter, color='m',linestyle='dashed', label='diff_Pme_propVSimprop')
 plt.plot(EE, diff_Pem_in_de_piecewise_matter, color='y', label='diff_Pem_propVSimprop')
@@ -1117,68 +937,6 @@ plt.plot(EE, diff_mt_single_Vac, color='b', linestyle='dotted',label='P_mt diff_
 plt.title("diff_single_Vac prob nu_tau ",fontsize=10)
 plt.xlabel('                                  Energy (GeV)')
 plt.legend(fontsize=10)
-
-
-fig10 =plt.figure(10)
-plt.plot(EE, e_appearance_vac, color='m',linestyle='dashed', label='e_appearance_vac')
-plt.plot(EE, m_appearance_vac, color='y', label='m_appearance_vac')
-plt.plot(EE, t_appearance_vac, color='b', label='t_appearance_vac',linestyle='dotted')
-plt.title("Vac prob appear",fontsize=10)
-plt.xlabel('                                  Energy (GeV)')
-plt.legend(fontsize=10)
-
-fig11 =plt.figure(11)
-plt.plot(EE, m_disappearance_vac, color='m',linestyle='dashed', label='m_disappearance_vac')
-plt.plot(EE, e_disappearance_vac, color='y', label='e_disappearance_vac')
-plt.plot(EE, t_disappearance_vac, color='b', label='t_disappearance_vac',linestyle='dotted')
-plt.title("Vac prob disappear",fontsize=10)
-plt.xlabel('                                  Energy (GeV)')
-plt.legend(fontsize=10)
-
-
-fig12 =plt.figure(12)
-plt.plot(EE, e_appearance_single_matter, color='m',linestyle='dashed', label='e_appearance_single_matter')
-plt.plot(EE, m_appearance_single_matter, color='y', label='m_appearance_single_matter')
-plt.plot(EE, t_appearance_single_matter, color='b', label='t_appearance_single_matter',linestyle='dotted')
-plt.title("single_matter prob appear",fontsize=10)
-plt.xlabel('                                  Energy (GeV)')
-plt.legend(fontsize=10)
-
-fig13 =plt.figure(13)
-plt.plot(EE, m_disappearance_single_matter, color='m',linestyle='dashed', label='m_disappearance_single_matter')
-plt.plot(EE, e_disappearance_single_matter, color='y', label='e_disappearance_single_matter')
-plt.plot(EE, t_disappearance_single_matter, color='b', linestyle='dotted',label='t_disappearance_single_matter')
-plt.title("single_matter prob disappear",fontsize=10)
-plt.xlabel('                                  Energy (GeV)')
-plt.legend(fontsize=10)
-
-fig14 =plt.figure(14)
-plt.plot(EE,diff_single_Vac_e_appearance, color='y', label='diff_single_Vac_e_appearance')
-plt.plot(EE,diff_single_Vac_e_disappearance, color='b', linestyle='dotted',label='diff_single_Vac_e_disappearance')
-plt.title("diff_single_Vac_e",fontsize=10)
-plt.xlabel('                                  Energy (GeV)')
-plt.legend(fontsize=10)
-
-fig15 =plt.figure(15)
-plt.plot(EE,diff_single_Vac_m_appearance, color='y', label='diff_single_Vac_m_appearance')
-plt.plot(EE,diff_single_Vac_m_disappearance, color='b', linestyle='dotted',label='diff_single_Vac_m_disappearance')
-plt.title("diff_single_Vac_m",fontsize=10)
-plt.xlabel('                                  Energy (GeV)')
-plt.legend(fontsize=10)
-
-fig16 =plt.figure(16)
-plt.plot(EE,diff_single_Vac_t_appearance, color='y', label='diff_single_Vac_t_appearance')
-plt.plot(EE,diff_single_Vac_t_disappearance, color='b', linestyle='dotted',label='diff_single_Vac_t_disappearance')
-plt.title("diff_single_Vac_t",fontsize=10)
-plt.xlabel('                                  Energy (GeV)')
-plt.legend(fontsize=10)
-
-
-
-
-
-
-
 
 
 
@@ -1505,156 +1263,83 @@ plt.title("increasing constant matter prob: nu_tau and nu_e ",fontsize=10)
 plt.xlabel('                                  Energy (GeV)')
 plt.legend(fontsize=10)
 
+
+fig60 =plt.figure(60)
+plt.plot(EE, Pme, color='b', label='P_me increasing constant matter ')
+plt.plot(EE, Pme_reversed, color='r',linestyle='dashed', label='P_me decreasing constant matter ')
+plt.plot(EE, Pem, color='g', linestyle='dotted',label='P_em increasing constant matter ')
+plt.plot(EE, Pem_reversed, color='y',linestyle='dashdot', label='P_em decreasing constant matter ')
+plt.title("piecewise constant matter prob: nu_e and nu_mu ",fontsize=10)
+plt.xlabel('                                  Energy (GeV)')
+plt.legend(fontsize=10)
+
+
 plt.show()
 #
 #time_invar_propVSimprop/3_flavor_oscillations_10^-4V_CP90
 
-fig1.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_NuElectron.jpg')
-fig2.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_NuMuon.jpg')
-fig3.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_NuTau.jpg')
-fig4.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_NuElectron.jpg')
-fig5.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_NuMuon.jpg')
-fig6.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_NuTau.jpg')
+fig1.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_NuElectron.jpg')
+fig2.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_NuMuon.jpg')
+fig3.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_NuTau.jpg')
+fig4.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_NuElectron.jpg')
+fig5.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_NuMuon.jpg')
+fig6.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_NuTau.jpg')
 
-fig7.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_prob_nuElectron.jpg')
-fig8.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_prob_nuMuon.jpg')
-fig9.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_prob_nuTau.jpg')
+fig7.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_prob_nuElectron.jpg')
+fig8.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_prob_nuMuon.jpg')
+fig9.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_prob_nuTau.jpg')
 
-fig10.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Vac_prob_appear.jpg')
-fig11.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Vac_prob_disappear.jpg')
-fig12.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_prob_appear.jpg')
-fig13.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_prob_disappear.jpg')
+fig17.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/nuE_constant_increase_piecewise_matter_prob.jpg')
+fig18.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/nuM_constant_increase_piecewise_matter_prob.jpg')
+fig19.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/nuT_constant_increase_piecewise_matter_prob.jpg')
 
-fig14.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_e.jpg')
-fig15.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_m.jpg')
-fig16.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single_Vac_t.jpg')
+fig20.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/nuE_constant_decrease_piecewise_matter_prob.jpg')
+fig21.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/nuM_constant_decrease_piecewise_matter_prob.jpg')
+fig22.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/nuT_constant_decrease_piecewise_matter_prob.jpg')
 
-fig17.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/nuE_constant_increase_piecewise_matter_prob.jpg')
-fig18.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/nuM_constant_increase_piecewise_matter_prob.jpg')
-fig19.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/nuT_constant_increase_piecewise_matter_prob.jpg')
+fig23.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_prob_nuE.jpg')
+fig24.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_prob_nuM.jpg')
+fig25.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_prob_nuT.jpg')
 
-fig20.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/nuE_constant_decrease_piecewise_matter_prob.jpg')
-fig21.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/nuM_constant_decrease_piecewise_matter_prob.jpg')
-fig22.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/nuT_constant_decrease_piecewise_matter_prob.jpg')
+fig26.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_prob_nuE.jpg')
+fig27.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_prob_nuM.jpg')
+fig28.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_prob_nuT.jpg')
 
-fig23.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_prob_nuE.jpg')
-fig24.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_prob_nuM.jpg')
-fig25.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_prob_nuT.jpg')
-
-fig26.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_prob_nuE.jpg')
-fig27.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_prob_nuM.jpg')
-fig28.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_prob_nuT.jpg')
-
-fig29.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/increase_piecewise_prob_appear.jpg')
-fig30.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/increase_piecewise_prob_disappear.jpg')
-fig31.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/decrease_piecewise_prob_appear.jpg')
-fig32.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/decrease_piecewise_prob_disappear.jpg')
-
-fig33.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_e.jpg')
-fig34.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_m.jpg')
-fig35.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_decrease_piecewise_Vac_t.jpg')
-
-fig36.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_e.jpg')
-fig37.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_m.jpg')
-fig38.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_t.jpg')
-
-fig39.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_piecewise_appearance.jpg')
-fig40.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_piecewise_disappearance.jpg')
-
-fig41.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_piecewise_increase.jpg')
-fig42.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_piecewise_decrease.jpg')
-
-fig43.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single.jpg')
-fig44.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/diff_vac.jpg')
-
-fig45.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_compar_nuE_muMU.jpg')
-fig46.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_compar_nuMU_muTAU.jpg')
-fig47.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_compar_nuE_muTAU.jpg')
-
-fig48.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_compar_nuE_muMU.jpg')
-fig49.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_compar_nuMU_muTAU.jpg')
-fig50.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_compar_nuE_muTAU.jpg')
+fig36.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_e.jpg')
+fig37.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_m.jpg')
+fig38.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_increase_piecewise_Vac_t.jpg')
 
 
-fig51.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Decreasing_piecewise_matter_compar_nuE_muMU.jpg')
-fig52.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Decreasing_piecewise_matter_compar_nuMU_muTAU.jpg')
-fig53.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Decreasing_piecewise_matter_compar_nuE_muTAU.jpg')
+fig41.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_piecewise_increase.jpg')
+fig42.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_piecewise_decrease.jpg')
+
+fig43.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_single.jpg')
+fig44.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/diff_vac.jpg')
+
+fig45.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_compar_nuE_muMU.jpg')
+fig46.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_compar_nuMU_muTAU.jpg')
+fig47.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Vacuum_compar_nuE_muTAU.jpg')
+
+fig48.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_compar_nuE_muMU.jpg')
+fig49.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_compar_nuMU_muTAU.jpg')
+fig50.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Single_matter_compar_nuE_muTAU.jpg')
 
 
-fig54.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Increasing_piecewise_matter_compar_nuE_muMU.jpg')
-fig55.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Increasing_piecewise_matter_compar_nuMU_muTAU.jpg')
-fig56.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Increasing_piecewise_matter_compar_nuE_muTAU.jpg')
-
-fig100.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Pem_Pme_propVSimprop.jpg')
-fig110.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Ptm_Pmt_propVSimprop.jpg')
-fig120.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Pet_Pte_propVSimprop.jpg')
-fig130.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Pem_Pme_propANDimprop.jpg')
-
-fig140.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Ptm_Pmt_propANDimprop.jpg')
-fig150.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop/3_flavor_oscillations_10^-4V_3steps_CP90/Pet_Pte_propANDimprop.jpg')
+fig51.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Decreasing_piecewise_matter_compar_nuE_muMU.jpg')
+fig52.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Decreasing_piecewise_matter_compar_nuMU_muTAU.jpg')
+fig53.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Decreasing_piecewise_matter_compar_nuE_muTAU.jpg')
 
 
-#plt.close()
-plt.close(fig1)
-plt.close(fig2)
-plt.close(fig3)
-plt.close(fig4)
-plt.close(fig5)
-plt.close(fig6)
-plt.close(fig7)
-plt.close(fig8)
-plt.close(fig9)
-plt.close(fig10)
-plt.close(fig11)
-plt.close(fig12)
-plt.close(fig13)
-plt.close(fig14)
-plt.close(fig15)
-plt.close(fig16)
-plt.close(fig17)
-plt.close(fig18)
-plt.close(fig19)
-plt.close(fig20)
-plt.close(fig21)
-plt.close(fig22)
-plt.close(fig23)
-plt.close(fig24)
-plt.close(fig25)
-plt.close(fig26)
-plt.close(fig27)
-plt.close(fig28)
-plt.close(fig29)
-plt.close(fig30)
-plt.close(fig31)
-plt.close(fig32)
-plt.close(fig33)
-plt.close(fig34)
-plt.close(fig35)
-plt.close(fig36)
-plt.close(fig37)
-plt.close(fig38)
-plt.close(fig39)
-plt.close(fig40)
-plt.close(fig41)
-plt.close(fig42)
-plt.close(fig43)
-plt.close(fig44)
-plt.close(fig45)
-plt.close(fig46)
-plt.close(fig47)
-plt.close(fig48)
-plt.close(fig49)
-plt.close(fig50)
-plt.close(fig51)
-plt.close(fig52)
-plt.close(fig53)
-plt.close(fig54)
-plt.close(fig55)
-plt.close(fig56)
-plt.close(fig100)
-plt.close(fig110)
-plt.close(fig120)
-plt.close(fig130)
-plt.close(fig140)
-plt.close(fig150)
-"""
+fig54.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Increasing_piecewise_matter_compar_nuE_muMU.jpg')
+fig55.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Increasing_piecewise_matter_compar_nuMU_muTAU.jpg')
+fig56.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Increasing_piecewise_matter_compar_nuE_muTAU.jpg')
+
+fig100.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Pem_Pme_propVSimprop.jpg')
+fig110.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Ptm_Pmt_propVSimprop.jpg')
+fig120.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Pet_Pte_propVSimprop.jpg')
+fig130.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Pem_Pme_propANDimprop.jpg')
+
+fig140.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Ptm_Pmt_propANDimprop.jpg')
+fig150.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Pet_Pte_propANDimprop.jpg')
+
+fig60.savefig('/Users/oliviabitter/Desktop/Nu_plots/time_invar_propVSimprop_OCT23/3_flavor_oscillations_10^-4V_3steps_CP90/Pem_Pem_Im_P_COMPARE.jpg') 
