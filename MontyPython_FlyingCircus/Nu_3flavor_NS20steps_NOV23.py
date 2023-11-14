@@ -480,7 +480,7 @@ diff_Pet_in_de_piecewise_matter = [0.0] * N
 diff_PetPte_increase_piecewise_matter = [0.0] * N
 diff_PetPte_decrease_piecewise_matter = [0.0] * N
 
-#doing 20 small increases for modeling a linear matter potential with equal baseline spacings
+#doing 20 small increases for modeling a linear matter potential with equal baseline spacings of 100
 vv=[0.0] *20
 ll=[0.0] *20
 for q in range(20):
