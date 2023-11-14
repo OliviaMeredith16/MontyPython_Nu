@@ -826,7 +826,7 @@ plt.plot(EE, Pme, color='b', label='P_me increasing constant matter ')
 plt.plot(EE, Pme_reversed, color='r',linestyle='dashed', label='P_me decreasing constant matter ')
 plt.plot(EE, Pem, color='g', linestyle='dotted',label='P_em increasing constant matter ')
 plt.plot(EE, Pem_reversed, color='y',linestyle='dashdot', label='P_em decreasing constant matter ')
-plt.title("piecewise constant matter prob: nu_e and nu_mu ",fontsize=10)
+plt.title("linear matter prob: nu_e and nu_mu ",fontsize=10)
 plt.xlabel('                                  Energy (GeV)')
 plt.legend(fontsize=10)
 
