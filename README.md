@@ -16,5 +16,5 @@ Nu_3flavor_piecewise_functions_used_new_matter_SEPT2023.py:
 script for 3 flavors, 3 step functions
 
 Nu_3flavor_NS100steps_NOV23.py:
-script for 3 flavors, 100 steps to approx. an increasing linear matter potential
+script for 3 flavors, 100 steps to approx. linear matter potentials
 
