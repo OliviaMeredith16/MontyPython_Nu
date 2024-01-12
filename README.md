@@ -18,3 +18,9 @@ script for 3 flavors, 3 step functions
 Nu_3flavor_NS100steps_NOV23.py:
 script for 3 flavors, 100 steps to approx. linear matter potentials
 
+Nu_3flavor_NS10steps_NOV23.py:
+script for 3 flavors, 10 steps to approx. linear matter potentials
+
+Nu_3flavor_NS20steps_NOV23.py:
+script for 3 flavors, 20 steps to approx. linear matter potentials
+
